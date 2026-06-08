@@ -44,7 +44,12 @@ class TelegramService
         }
 
         try {
-            Http::post("{$this->baseUrl}/sendMessage", $payload);
+            $response = Http::post("{$this->baseUrl}/sendMessage", $payload);
+            if (!$response->successful()) {
+                Log::error('Telegram API error in sendMessage: ' . $response->body());
+            } else {
+                Log::info('Telegram sendMessage success.');
+            }
         } catch (\Exception $e) {
             Log::error('TelegramService sendMessage failed: ' . $e->getMessage());
         }
@@ -207,8 +212,10 @@ class TelegramService
 
         $totalIn = $movements->where('type', 'IN')->sum('quantity');
         $totalOut = $movements->where('type', 'OUT')->sum('quantity');
+        // BUG-09: Exclude out-of-stock products from lowStockCount to avoid double-counting
         $lowStockCount = \App\Models\Product::where('is_active', true)
             ->whereColumn('current_stock', '<=', 'minimum_stock')
+            ->where('current_stock', '>', 0)
             ->count();
         $outOfStockCount = \App\Models\Product::where('is_active', true)
             ->where('current_stock', 0)

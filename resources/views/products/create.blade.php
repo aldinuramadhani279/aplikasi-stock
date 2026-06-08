@@ -20,7 +20,16 @@
                     <input type="text" name="name" value="{{ old('name') }}" class="form-control" placeholder="Nama produk..." required>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">SKU *</label>
+                    <label class="form-label">
+                        SKU *
+                        <div class="hint-wrapper">
+                            <span class="hint-toggle"><i data-lucide="info"></i></span>
+                            <div class="hint-popover">
+                                <h4>Apa itu SKU?</h4>
+                                <p style="margin:0;">SKU (Stock Keeping Unit) adalah kode unik untuk setiap produk agar mudah dilacak. Contoh: <strong>BRG-001</strong> atau <strong>Kopi-XL</strong>.</p>
+                            </div>
+                        </div>
+                    </label>
                     <input type="text" name="sku" value="{{ old('sku') }}" class="form-control" placeholder="ABC-001" required>
                 </div>
             </div>
@@ -51,7 +60,16 @@
                     <input type="number" name="current_stock" value="{{ old('current_stock', 0) }}" class="form-control" min="0" required>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Stok Minimum *</label>
+                    <label class="form-label">
+                        Stok Minimum *
+                        <div class="hint-wrapper">
+                            <span class="hint-toggle"><i data-lucide="info"></i></span>
+                            <div class="hint-popover">
+                                <h4>Fungsi Stok Minimum:</h4>
+                                <p style="margin:0;">Batas peringatan (alert). Jika stok menyentuh atau kurang dari angka ini, produk akan masuk daftar "Stok Menipis".</p>
+                            </div>
+                        </div>
+                    </label>
                     <input type="number" name="minimum_stock" value="{{ old('minimum_stock', 10) }}" class="form-control" min="0" required>
                 </div>
                 <div class="form-group">

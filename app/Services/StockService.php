@@ -20,18 +20,21 @@ class StockService
     public function addStock(Product $product, int $quantity, string $notes = '', string $reference = ''): StockMovement
     {
         return DB::transaction(function () use ($product, $quantity, $notes, $reference) {
+            // Lock the row to prevent race conditions
+            $product = Product::lockForUpdate()->findOrFail($product->id);
+
             $stockBefore = $product->current_stock;
             $product->increment('current_stock', $quantity);
             $product->refresh();
 
             $movement = StockMovement::create([
-                'product_id' => $product->id,
-                'user_id' => Auth::id(),
-                'type' => 'IN',
-                'quantity' => $quantity,
-                'stock_before' => $stockBefore,
-                'stock_after' => $product->current_stock,
-                'notes' => $notes,
+                'product_id'       => $product->id,
+                'user_id'          => Auth::id(),
+                'type'             => 'IN',
+                'quantity'         => $quantity,
+                'stock_before'     => $stockBefore,
+                'stock_after'      => $product->current_stock,
+                'notes'            => $notes,
                 'reference_number' => $reference,
             ]);
 
@@ -55,6 +58,9 @@ class StockService
     public function removeStock(Product $product, int $quantity, string $notes = '', string $reference = ''): StockMovement
     {
         return DB::transaction(function () use ($product, $quantity, $notes, $reference) {
+            // Lock the row to prevent race conditions
+            $product = Product::lockForUpdate()->findOrFail($product->id);
+
             if ($product->current_stock < $quantity) {
                 throw new \Exception("Stok tidak mencukupi. Stok tersedia: {$product->current_stock} {$product->unit}");
             }
@@ -64,13 +70,13 @@ class StockService
             $product->refresh();
 
             $movement = StockMovement::create([
-                'product_id' => $product->id,
-                'user_id' => Auth::id(),
-                'type' => 'OUT',
-                'quantity' => $quantity,
-                'stock_before' => $stockBefore,
-                'stock_after' => $product->current_stock,
-                'notes' => $notes,
+                'product_id'       => $product->id,
+                'user_id'          => Auth::id(),
+                'type'             => 'OUT',
+                'quantity'         => $quantity,
+                'stock_before'     => $stockBefore,
+                'stock_after'      => $product->current_stock,
+                'notes'            => $notes,
                 'reference_number' => $reference,
             ]);
 
@@ -90,18 +96,21 @@ class StockService
     public function adjustStock(Product $product, int $newStock, string $notes = ''): StockMovement
     {
         return DB::transaction(function () use ($product, $newStock, $notes) {
+            // Lock the row to prevent race conditions
+            $product = Product::lockForUpdate()->findOrFail($product->id);
+
             $stockBefore = $product->current_stock;
             $product->update(['current_stock' => $newStock]);
             $product->refresh();
 
             $movement = StockMovement::create([
-                'product_id' => $product->id,
-                'user_id' => Auth::id(),
-                'type' => 'ADJUSTMENT',
-                'quantity' => abs($newStock - $stockBefore),
-                'stock_before' => $stockBefore,
-                'stock_after' => $product->current_stock,
-                'notes' => $notes,
+                'product_id'       => $product->id,
+                'user_id'          => Auth::id(),
+                'type'             => 'ADJUSTMENT',
+                'quantity'         => abs($newStock - $stockBefore),
+                'stock_before'     => $stockBefore,
+                'stock_after'      => $product->current_stock,
+                'notes'            => $notes,
                 'reference_number' => 'ADJ-' . now()->format('YmdHis'),
             ]);
 

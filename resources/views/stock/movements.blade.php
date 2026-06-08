@@ -33,7 +33,7 @@
         </div>
         <div style="display:flex; gap:8px;">
             <button type="submit" class="btn btn-primary"><i data-lucide="filter"></i> Filter</button>
-            <a href="{{ route('stock.movements') }}" class="btn btn-secondary"><i data-lucide="x"></i></a>
+            <a href="{{ route('stock.movements') }}" class="btn btn-ghost btn-sm btn-icon"><i data-lucide="x"></i></a>
         </div>
     </form>
 </div>
@@ -73,22 +73,22 @@
                             <td style="color:var(--text-muted);">{{ $mv->id }}</td>
                             <td style="white-space:nowrap; color:var(--text-secondary);">{{ $mv->created_at->format('d/m/Y H:i') }}</td>
                             <td>
-                                <a href="{{ route('products.show', $mv->product_id) }}" style="color:#a5b4fc; text-decoration:none; font-weight:600;">{{ $mv->product->name }}</a>
+                                <a href="{{ route('products.show', $mv->product_id) }}" style="color:var(--primary); text-decoration:none; font-weight:600;">{{ $mv->product->name }}</a>
                                 <div style="font-size:11px; color:var(--text-muted);">{{ $mv->product->sku }}</div>
                             </td>
                             <td>
-                                <span class="badge badge-{{ $mv->type === 'IN' ? 'green' : ($mv->type === 'OUT' ? 'red' : 'blue') }}">
+                                <span class="badge badge-{{ $mv->type === 'IN' ? 'teal' : ($mv->type === 'OUT' ? 'red' : 'blue') }}">
                                     @if($mv->type === 'IN')
                                         <i data-lucide="arrow-down-to-line"></i>
                                     @elseif($mv->type === 'OUT')
                                         <i data-lucide="arrow-up-from-line"></i>
                                     @else
-                                        <i data-lucide="sliders-horizontal"></i>
+                                        <i data-lucide="sliders"></i>
                                     @endif
                                     {{ $mv->type_label }}
                                 </span>
                             </td>
-                            <td style="font-weight:700; color:{{ $mv->type === 'IN' ? '#34d399' : ($mv->type === 'OUT' ? '#f87171' : '#60a5fa') }};">
+                            <td style="font-weight:700; color:{{ $mv->type === 'IN' ? 'var(--success)' : ($mv->type === 'OUT' ? 'var(--danger)' : 'var(--info)') }};">
                                 {{ $mv->type === 'OUT' ? '-' : '+' }}{{ $mv->quantity }}
                             </td>
                             <td style="color:var(--text-muted);">{{ $mv->stock_before }}</td>

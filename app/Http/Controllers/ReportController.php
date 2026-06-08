@@ -26,12 +26,16 @@ class ReportController extends Controller
             ->paginate(20)
             ->withQueryString();
 
+        // BUG-10: Use startOfDay() consistently to match the movements table query
+        $dateFromStart = $dateFrom->copy()->startOfDay();
+        $dateToEnd     = $dateTo->copy()->endOfDay();
+
         $summary = [
-            'total_in' => StockMovement::whereBetween('created_at', [$dateFrom, $dateTo->copy()->endOfDay()])
+            'total_in'           => StockMovement::whereBetween('created_at', [$dateFromStart, $dateToEnd])
                 ->where('type', 'IN')->sum('quantity'),
-            'total_out' => StockMovement::whereBetween('created_at', [$dateFrom, $dateTo->copy()->endOfDay()])
+            'total_out'          => StockMovement::whereBetween('created_at', [$dateFromStart, $dateToEnd])
                 ->where('type', 'OUT')->sum('quantity'),
-            'total_transactions' => StockMovement::whereBetween('created_at', [$dateFrom, $dateTo->copy()->endOfDay()])->count(),
+            'total_transactions' => StockMovement::whereBetween('created_at', [$dateFromStart, $dateToEnd])->count(),
         ];
 
         $lowStockProducts = Product::with('category')

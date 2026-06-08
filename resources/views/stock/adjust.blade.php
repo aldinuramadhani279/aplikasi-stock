@@ -6,7 +6,7 @@
     <div class="card">
         <div class="card-header">
             <span class="card-title" style="display:flex; align-items:center; gap:8px;">
-                <i data-lucide="sliders-horizontal" style="width:20px;height:20px;"></i> Penyesuaian Stok
+                <i data-lucide="sliders" style="width:20px;height:20px;"></i> Penyesuaian Stok
             </span>
         </div>
 

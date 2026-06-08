@@ -216,7 +216,7 @@ class TelegramWebhookController extends Controller
         $qty = intval($parts[2]);
         $notes = count($parts) > 3 ? implode(' ', array_slice($parts, 3)) : 'Via Telegram Bot';
 
-        $product = Product::where('sku', $sku)->first();
+        $product = Product::where('sku', $sku)->where('is_active', true)->first();
 
         if (!$product) {
             $this->telegram->sendMessage($chatId, "❌ Produk dengan SKU <code>{$sku}</code> tidak ditemukan.");
@@ -253,10 +253,15 @@ class TelegramWebhookController extends Controller
         $qty = intval($parts[2]);
         $notes = count($parts) > 3 ? implode(' ', array_slice($parts, 3)) : 'Via Telegram Bot';
 
-        $product = Product::where('sku', $sku)->first();
+        $product = Product::where('sku', $sku)->where('is_active', true)->first();
 
         if (!$product) {
-            $this->telegram->sendMessage($chatId, "❌ Produk dengan SKU <code>{$sku}</code> tidak ditemukan.");
+            $this->telegram->sendMessage($chatId, "❌ Produk dengan SKU <code>{$sku}</code> tidak ditemukan atau tidak aktif.");
+            return;
+        }
+
+        if ($qty <= 0) {
+            $this->telegram->sendMessage($chatId, "❌ Jumlah harus lebih dari 0.");
             return;
         }
 

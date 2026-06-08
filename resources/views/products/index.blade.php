@@ -29,7 +29,7 @@
         </div>
         <div style="display:flex;gap:8px;">
             <button type="submit" class="btn btn-primary"><i data-lucide="search"></i> Cari</button>
-            <a href="{{ route('products.index') }}" class="btn btn-secondary"><i data-lucide="x"></i></a>
+            <a href="{{ route('products.index') }}" class="btn btn-ghost btn-sm btn-icon"><i data-lucide="x"></i></a>
         </div>
     </form>
 </div>
@@ -62,8 +62,8 @@
                             @if($product->image)
                                 <img src="{{ asset('storage/'.$product->image) }}" style="width:34px;height:34px;border-radius:8px;object-fit:cover;">
                             @else
-                                <div style="width:34px;height:34px;background:rgba(99,102,241,0.15);border-radius:8px;display:flex;align-items:center;justify-content:center;">
-                                    <i data-lucide="package" style="width:16px;height:16px;color:#818cf8;"></i>
+                                <div style="width:34px;height:34px;background:var(--primary-light);border-radius:8px;display:flex;align-items:center;justify-content:center;">
+                                    <i data-lucide="package" style="width:16px;height:16px;color:var(--primary);"></i>
                                 </div>
                             @endif
                             <div>
@@ -72,10 +72,10 @@
                             </div>
                         </div>
                     </td>
-                    <td><code style="background:rgba(99,102,241,0.1);padding:2px 8px;border-radius:4px;font-size:12px;">{{ $product->sku }}</code></td>
+                    <td><code style="background:#F0FDFA;color:var(--primary);padding:2px 8px;border-radius:4px;font-size:12px;font-weight:600;">{{ $product->sku }}</code></td>
                     <td style="color:var(--text-secondary);">{{ $product->category->name }}</td>
                     <td>
-                        <span style="font-weight:700;font-size:15px;color:{{ $product->isOutOfStock()?'#ef4444':($product->isLowStock()?'#f59e0b':'#34d399') }};">{{ $product->current_stock }}</span>
+                        <span style="font-weight:700;font-size:15px;color:{{ $product->isOutOfStock()?'var(--danger)':($product->isLowStock()?'var(--warning)':'var(--success)') }};">{{ $product->current_stock }}</span>
                         <span style="color:var(--text-muted);font-size:12px;"> {{ $product->unit }}</span>
                     </td>
                     <td style="color:var(--text-muted);">{{ $product->minimum_stock }} {{ $product->unit }}</td>
@@ -90,9 +90,9 @@
                     </td>
                     <td>
                         <div style="display:flex;gap:5px;">
-                            <a href="{{ route('products.show', $product) }}" class="btn btn-secondary btn-sm btn-icon" title="Detail"><i data-lucide="eye"></i></a>
+                            <a href="{{ route('products.show', $product) }}" class="btn btn-outline btn-sm btn-icon" title="Detail"><i data-lucide="eye"></i></a>
                             @if(auth()->user()->isAdmin())
-                            <a href="{{ route('products.edit', $product) }}" class="btn btn-secondary btn-sm btn-icon" title="Edit"><i data-lucide="pencil"></i></a>
+                            <a href="{{ route('products.edit', $product) }}" class="btn btn-outline btn-sm btn-icon" title="Edit"><i data-lucide="pencil"></i></a>
                             <form method="POST" action="{{ route('products.destroy', $product) }}" onsubmit="return confirm('Yakin hapus produk ini?')">
                                 @csrf @method('DELETE')
                                 <button type="submit" class="btn btn-danger btn-sm btn-icon" title="Hapus"><i data-lucide="trash-2"></i></button>

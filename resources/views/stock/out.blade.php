@@ -6,7 +6,7 @@
     <div class="card">
         <div class="card-header">
             <span class="card-title" style="display:flex; align-items:center; gap:8px;">
-                <i data-lucide="arrow-up-from-line" style="width:20px;height:20px;color:#ef4444;"></i> Input Barang Keluar
+                <i data-lucide="arrow-up-from-line" style="width:20px;height:20px;color:var(--danger);"></i> Input Barang Keluar
             </span>
         </div>
 
@@ -26,7 +26,7 @@
             </div>
 
             {{-- Product Info --}}
-            <div id="productInfo" style="display:none; background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.2); border-radius:10px; padding:14px; margin-bottom:20px;">
+            <div id="productInfo" style="display:none; background:#FEF2F2; border:1px solid #FECACA; border-radius:10px; padding:14px; margin-bottom:20px;">
                 <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:12px; text-align:center;">
                     <div>
                         <div style="font-size:11px; color:var(--text-muted);">SKU</div>
@@ -34,11 +34,11 @@
                     </div>
                     <div>
                         <div style="font-size:11px; color:var(--text-muted);">Stok Tersedia</div>
-                        <div id="pi_stock" style="font-weight:700; font-size:18px; color:#f87171;"></div>
+                        <div id="pi_stock" style="font-weight:700; font-size:18px; color:var(--danger);"></div>
                     </div>
                     <div>
                         <div style="font-size:11px; color:var(--text-muted);">Min. Stok</div>
-                        <div id="pi_min" style="font-weight:600; color:#fbbf24;"></div>
+                        <div id="pi_min" style="font-weight:600; color:var(--warning);"></div>
                     </div>
                 </div>
             </div>
@@ -46,7 +46,7 @@
             <div class="form-group">
                 <label class="form-label">Jumlah Keluar *</label>
                 <input type="number" name="quantity" id="qty_input" value="{{ old('quantity') }}" class="form-control" min="1" required placeholder="0">
-                <div id="stock_warning" style="display:none; color:#f87171; font-size:12px; margin-top:4px; display:flex; align-items:center; gap:4px;">
+                <div id="stock_warning" style="display:none; color:var(--danger); font-size:12px; margin-top:4px; align-items:center; gap:4px;">
                     <i data-lucide="alert-triangle" style="width:14px;height:14px;"></i> Jumlah melebihi stok tersedia!
                 </div>
             </div>
@@ -80,13 +80,13 @@
             <div style="text-align:center; padding:32px; color:var(--text-muted);">Belum ada transaksi hari ini</div>
         @else
             @foreach($todayOut as $mv)
-                <div style="display:flex; align-items:center; justify-content:space-between; padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.04);">
+                <div style="display:flex; align-items:center; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--border-light);">
                     <div>
                         <div style="font-weight:600; font-size:13px;">{{ $mv->product->name }}</div>
                         <div style="font-size:11px; color:var(--text-muted);">{{ $mv->user->name }} · {{ $mv->notes }}</div>
                     </div>
                     <div style="text-align:right;">
-                        <div style="font-weight:700; color:#f87171;">-{{ $mv->quantity }} {{ $mv->product->unit }}</div>
+                        <div style="font-weight:700; color:var(--danger);">-{{ $mv->quantity }} {{ $mv->product->unit }}</div>
                         <div style="font-size:11px; color:var(--text-muted);">{{ $mv->created_at->format('H:i') }}</div>
                     </div>
                 </div>
@@ -99,12 +99,17 @@
 @section('scripts')
 <script>
     let currentStock = 0;
+    let currentProductId = null;
 
     function loadProductInfo(productId) {
         if (!productId) {
             document.getElementById('productInfo').style.display = 'none';
+            currentStock = 0;
+            currentProductId = null;
             return;
         }
+        currentProductId = productId;
+        // BUG-13: Always fetch fresh data from server (not stale dropdown text)
         fetch(`/stock/product/${productId}`)
             .then(r => r.json())
             .then(data => {
@@ -128,6 +133,35 @@
     }
 
     document.getElementById('qty_input').addEventListener('input', checkStockWarning);
+
+    // BUG-13: On submit, re-fetch fresh stock to catch any race condition
+    document.querySelector('form').addEventListener('submit', function(e) {
+        const productId = document.getElementById('product_select').value;
+        const qty = parseInt(document.getElementById('qty_input').value) || 0;
+        if (!productId || qty <= 0) return; // Let server validation handle these
+
+        e.preventDefault();
+        const form = this;
+
+        fetch(`/stock/product/${productId}`)
+            .then(r => r.json())
+            .then(data => {
+                currentStock = data.current_stock;
+                // Update displayed info with latest values
+                document.getElementById('pi_stock').textContent = `${data.current_stock} ${data.unit}`;
+                checkStockWarning();
+
+                if (qty > data.current_stock) {
+                    alert(`⚠️ Stok tidak mencukupi!\nStok terkini: ${data.current_stock} ${data.unit}\nJumlah yang diminta: ${qty} ${data.unit}\n\nSilakan ubah jumlah.`);
+                } else {
+                    form.submit();
+                }
+            })
+            .catch(() => {
+                // If fetch fails, let server handle it
+                form.submit();
+            });
+    });
 
     const select = document.getElementById('product_select');
     if (select.value) loadProductInfo(select.value);

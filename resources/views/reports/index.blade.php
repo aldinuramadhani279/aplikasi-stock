@@ -32,37 +32,41 @@
     {{-- Filters & Table --}}
     <div style="grid-column:span 2;">
         <div class="card" style="margin-bottom:20px;">
-            <form method="GET" style="display:flex; gap:12px; flex-wrap:wrap; align-items:flex-end;">
-                <div style="flex:1; min-width:140px;">
-                    <label class="form-label">Dari Tanggal</label>
-                    <input type="date" name="date_from" value="{{ request('date_from', $dateFrom->format('Y-m-d')) }}" class="form-control">
-                </div>
-                <div style="flex:1; min-width:140px;">
-                    <label class="form-label">Sampai Tanggal</label>
-                    <input type="date" name="date_to" value="{{ request('date_to', $dateTo->format('Y-m-d')) }}" class="form-control">
-                </div>
-                <div style="flex:1; min-width:140px;">
-                    <label class="form-label">Tipe Transaksi</label>
-                    <select name="type" class="form-control">
-                        <option value="">Semua</option>
-                        <option value="IN" {{ request('type') === 'IN' ? 'selected' : '' }}>Masuk</option>
-                        <option value="OUT" {{ request('type') === 'OUT' ? 'selected' : '' }}>Keluar</option>
-                        <option value="ADJUSTMENT" {{ request('type') === 'ADJUSTMENT' ? 'selected' : '' }}>Penyesuaian</option>
-                    </select>
-                </div>
-                <div style="display:flex; gap:8px; align-items:flex-end;">
-                    <button type="submit" class="btn btn-primary"><i data-lucide="filter"></i> Filter</button>
-                    <a href="{{ route('reports.index') }}" class="btn btn-secondary"><i data-lucide="x"></i></a>
-                </div>
+            <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:12px; flex-wrap:wrap;">
+                <form method="GET" style="display:flex; gap:12px; flex-wrap:wrap; align-items:flex-end; flex:1;">
+                    <div style="flex:1; min-width:140px;">
+                        <label class="form-label">Dari Tanggal</label>
+                        <input type="date" name="date_from" value="{{ request('date_from', $dateFrom->format('Y-m-d')) }}" class="form-control">
+                    </div>
+                    <div style="flex:1; min-width:140px;">
+                        <label class="form-label">Sampai Tanggal</label>
+                        <input type="date" name="date_to" value="{{ request('date_to', $dateTo->format('Y-m-d')) }}" class="form-control">
+                    </div>
+                    <div style="flex:1; min-width:140px;">
+                        <label class="form-label">Tipe Transaksi</label>
+                        <select name="type" class="form-control">
+                            <option value="">Semua</option>
+                            <option value="IN" {{ request('type') === 'IN' ? 'selected' : '' }}>Masuk</option>
+                            <option value="OUT" {{ request('type') === 'OUT' ? 'selected' : '' }}>Keluar</option>
+                            <option value="ADJUSTMENT" {{ request('type') === 'ADJUSTMENT' ? 'selected' : '' }}>Penyesuaian</option>
+                        </select>
+                    </div>
+                    <div style="display:flex; gap:8px; align-items:flex-end;">
+                        <button type="submit" class="btn btn-primary"><i data-lucide="filter"></i> Filter</button>
+                        <a href="{{ route('reports.index') }}" class="btn btn-secondary"><i data-lucide="x"></i></a>
+                    </div>
+                </form>
+
                 <div style="display:flex; gap:8px; align-items:flex-end;">
                     <form method="POST" action="{{ route('reports.send-telegram') }}" style="display:inline;">
                         @csrf
+                        <input type="hidden" name="date" value="{{ request('date_from', $dateFrom->format('Y-m-d')) }}">
                         <button type="submit" class="btn btn-secondary" style="background:rgba(39,195,255,0.1); border-color:rgba(39,195,255,0.3); color:#67e8f9;">
                             <i data-lucide="send"></i> Kirim ke Telegram
                         </button>
                     </form>
                 </div>
-            </form>
+            </div>
         </div>
 
         <div class="card">
@@ -103,7 +107,7 @@
                                             @elseif($mv->type === 'OUT')
                                                 <i data-lucide="arrow-up-from-line"></i>
                                             @else
-                                                <i data-lucide="sliders-horizontal"></i>
+                                                <i data-lucide="sliders"></i>
                                             @endif
                                             {{ $mv->type_label }}
                                         </span>

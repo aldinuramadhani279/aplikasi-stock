@@ -30,13 +30,41 @@
             </div>
 
             <div class="form-group">
-                <label class="form-label">Bot Token *</label>
+                <label class="form-label">
+                    Bot Token *
+                    <div class="hint-wrapper">
+                        <span class="hint-toggle"><i data-lucide="info"></i></span>
+                        <div class="hint-popover">
+                            <h4>Cara Mendapatkan Token:</h4>
+                            <ol>
+                                <li>Buka aplikasi Telegram, cari <strong>@BotFather</strong></li>
+                                <li>Ketik pesan <code>/newbot</code> dan ikuti instruksi (nama bot & username)</li>
+                                <li>Setelah selesai, BotFather akan memberikan tulisan panjang (Token). Salin teks tersebut.</li>
+                                <li>Paste token tersebut ke kolom ini.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </label>
                 <input type="password" name="bot_token" value="{{ $settings['bot_token'] ?? '' }}" class="form-control" placeholder="1234567890:ABCdef...">
                 <div style="font-size:12px; color:var(--text-muted); margin-top:6px;">Dapatkan dari @BotFather di Telegram</div>
             </div>
 
             <div class="form-group">
-                <label class="form-label">Webhook URL</label>
+                <label class="form-label">
+                    Webhook URL
+                    <div class="hint-wrapper">
+                        <span class="hint-toggle"><i data-lucide="info"></i></span>
+                        <div class="hint-popover">
+                            <h4>Fungsi Webhook URL:</h4>
+                            <p style="margin:0 0 6px 0;">Ini adalah jembatan agar Telegram bisa "ngobrol" dengan aplikasi Anda.</p>
+                            <ol>
+                                <li>Jika Anda pakai komputer lokal, jalankan Ngrok (contoh: <code>ngrok http 8000</code>).</li>
+                                <li>Copy URL HTTPS yang diberikan Ngrok.</li>
+                                <li>Paste di sini dan WAJIB ditambahkan <code>/api/telegram/webhook</code> di ujungnya.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </label>
                 <input type="url" name="webhook_url" value="{{ $settings['webhook_url'] ?? '' }}" class="form-control" placeholder="https://yourdomain.com/api/telegram/webhook">
                 <div style="font-size:12px; color:var(--text-muted); margin-top:6px;">Harus HTTPS. Gunakan ngrok untuk development lokal.</div>
             </div>
@@ -153,22 +181,6 @@
                 <i data-lucide="flask-conical"></i> Test Kirim Pesan
             </button>
         </form>
-    </div>
-
-    {{-- Quick Help --}}
-    <div class="card" style="margin-top:24px; background:rgba(6,182,212,0.05); border-color:rgba(6,182,212,0.2);">
-        <div style="font-weight:600; margin-bottom:12px; color:#67e8f9; display:flex; align-items:center; gap:8px;">
-            <i data-lucide="book-open" style="width:18px;height:18px;"></i> Panduan Cepat Setup Telegram Bot
-        </div>
-        <ol style="color:var(--text-secondary); font-size:13px; padding-left:20px; line-height:2;">
-            <li>Buka Telegram, cari <strong>@BotFather</strong></li>
-            <li>Ketik <code>/newbot</code> dan ikuti instruksi</li>
-            <li>Salin Bot Token yang diberikan dan isi di atas</li>
-            <li>Untuk mendapatkan Chat ID: kirim pesan ke bot, lalu akses API getUpdates</li>
-            <li>Isi semua Chat ID sesuai kebutuhan</li>
-            <li>Klik <strong>Simpan</strong> lalu <strong>Set Webhook</strong></li>
-            <li>Klik <strong>Test</strong> untuk verifikasi koneksi</li>
-        </ol>
     </div>
 </div>
 @endsection

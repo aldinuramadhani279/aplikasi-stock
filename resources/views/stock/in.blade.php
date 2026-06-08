@@ -6,7 +6,7 @@
     <div class="card">
         <div class="card-header">
             <span class="card-title" style="display:flex; align-items:center; gap:8px;">
-                <i data-lucide="arrow-down-to-line" style="width:20px;height:20px;color:#10b981;"></i> Input Barang Masuk
+                <i data-lucide="arrow-down-to-line" style="width:20px;height:20px;color:var(--success);"></i> Input Barang Masuk
             </span>
         </div>
 
@@ -26,7 +26,7 @@
             </div>
 
             {{-- Product Info Card --}}
-            <div id="productInfo" style="display:none; background:rgba(99,102,241,0.08); border:1px solid rgba(99,102,241,0.2); border-radius:10px; padding:14px; margin-bottom:20px;">
+            <div id="productInfo" style="display:none; background:#F0FDFA; border:1px solid #CCFBF1; border-radius:10px; padding:14px; margin-bottom:20px;">
                 <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:12px; text-align:center;">
                     <div>
                         <div style="font-size:11px; color:var(--text-muted);">SKU</div>
@@ -34,11 +34,11 @@
                     </div>
                     <div>
                         <div style="font-size:11px; color:var(--text-muted);">Stok Sekarang</div>
-                        <div id="pi_stock" style="font-weight:700; font-size:18px; color:#a5b4fc;"></div>
+                        <div id="pi_stock" style="font-weight:700; font-size:18px; color:var(--primary);"></div>
                     </div>
                     <div>
                         <div style="font-size:11px; color:var(--text-muted);">Min. Stok</div>
-                        <div id="pi_min" style="font-weight:600; color:#fbbf24;"></div>
+                        <div id="pi_min" style="font-weight:600; color:var(--warning);"></div>
                     </div>
                 </div>
             </div>
@@ -77,13 +77,13 @@
             <div style="text-align:center; padding:32px; color:var(--text-muted);">Belum ada transaksi hari ini</div>
         @else
             @foreach($todayIn as $mv)
-                <div style="display:flex; align-items:center; justify-content:space-between; padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.04);">
+                <div style="display:flex; align-items:center; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--border-light);">
                     <div>
                         <div style="font-weight:600; font-size:13px;">{{ $mv->product->name }}</div>
                         <div style="font-size:11px; color:var(--text-muted);">{{ $mv->user->name }} · {{ $mv->notes }}</div>
                     </div>
                     <div style="text-align:right;">
-                        <div style="font-weight:700; color:#34d399;">+{{ $mv->quantity }} {{ $mv->product->unit }}</div>
+                        <div style="font-weight:700; color:var(--success);">+{{ $mv->quantity }} {{ $mv->product->unit }}</div>
                         <div style="font-size:11px; color:var(--text-muted);">{{ $mv->created_at->format('H:i') }}</div>
                     </div>
                 </div>
